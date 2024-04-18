@@ -1,9 +1,9 @@
-use crate::reader::Reader;
 use crate::constants::attribute_constants::*;
+use crate::constants::instructions::*;
 use crate::constants::pool_constants::*;
+use crate::reader::Reader;
 use crate::structures::constant_pool::ConstantPool;
 use crate::structures::constant_pool_entry::ConstantPoolEntry;
-use crate::constants::instructions::{*};
 
 pub struct Parser<'a> {
     reader: Reader<'a>,
@@ -47,14 +47,18 @@ impl<'a> Parser<'a> {
                 CONSTANT_LONG => {
                     let high_bytes = self.reader.read_u4();
                     let low_bytes = self.reader.read_u4();
-                    constant_pool.add(ConstantPoolEntry::Long
-                    { high_bytes, low_bytes });
+                    constant_pool.add(ConstantPoolEntry::Long {
+                        high_bytes,
+                        low_bytes,
+                    });
                 }
                 CONSTANT_DOUBLE => {
                     let high_bytes = self.reader.read_u4();
                     let low_bytes = self.reader.read_u4();
-                    constant_pool.add(ConstantPoolEntry::Double
-                    { high_bytes, low_bytes });
+                    constant_pool.add(ConstantPoolEntry::Double {
+                        high_bytes,
+                        low_bytes,
+                    });
                 }
                 CONSTANT_CLASS => {
                     let name_index = self.reader.read_u2();
@@ -67,49 +71,62 @@ impl<'a> Parser<'a> {
                 CONSTANT_FIELD_REF => {
                     let class_index = self.reader.read_u2();
                     let name_and_type_index = self.reader.read_u2();
-                    constant_pool.add(ConstantPoolEntry::Fieldref
-                    { class_index, name_and_type_index });
+                    constant_pool.add(ConstantPoolEntry::Fieldref {
+                        class_index,
+                        name_and_type_index,
+                    });
                 }
                 CONSTANT_METHOD_REF => {
                     let class_index = self.reader.read_u2();
                     let name_and_type_index = self.reader.read_u2();
-                    constant_pool.add(ConstantPoolEntry::Methodref
-                    { class_index, name_and_type_index });
+                    constant_pool.add(ConstantPoolEntry::Methodref {
+                        class_index,
+                        name_and_type_index,
+                    });
                 }
                 CONSTANT_INTERFACE_METHOD_REF => {
                     let class_index = self.reader.read_u2();
                     let name_and_type_index = self.reader.read_u2();
-                    constant_pool.add(ConstantPoolEntry::InterfaceMethodref
-                    { class_index, name_and_type_index });
+                    constant_pool.add(ConstantPoolEntry::InterfaceMethodref {
+                        class_index,
+                        name_and_type_index,
+                    });
                 }
                 CONSTANT_NAME_AND_TYPE => {
                     let name_index = self.reader.read_u2();
                     let descriptor_index = self.reader.read_u2();
-                    constant_pool.add(ConstantPoolEntry::NameAndType
-                    { name_index, descriptor_index });
+                    constant_pool.add(ConstantPoolEntry::NameAndType {
+                        name_index,
+                        descriptor_index,
+                    });
                 }
                 CONSTANT_METHOD_HANDLE => {
                     let reference_kind = self.reader.read_u1();
                     let reference_index = self.reader.read_u2();
-                    constant_pool.add(ConstantPoolEntry::MethodHandle
-                    { reference_kind, reference_index });
+                    constant_pool.add(ConstantPoolEntry::MethodHandle {
+                        reference_kind,
+                        reference_index,
+                    });
                 }
                 CONSTANT_METHOD_TYPE => {
                     let descriptor_index = self.reader.read_u2();
-                    constant_pool.add(ConstantPoolEntry::MethodType
-                    { descriptor_index });
+                    constant_pool.add(ConstantPoolEntry::MethodType { descriptor_index });
                 }
                 CONSTANT_DYNAMIC => {
                     let bootstrap_method_attr_index = self.reader.read_u2();
                     let name_and_type_index = self.reader.read_u2();
-                    constant_pool.add(ConstantPoolEntry::Dynamic
-                    { bootstrap_method_attr_index, name_and_type_index });
+                    constant_pool.add(ConstantPoolEntry::Dynamic {
+                        bootstrap_method_attr_index,
+                        name_and_type_index,
+                    });
                 }
                 CONSTANT_INVOKE_DYNAMIC => {
                     let bootstrap_method_attr_index = self.reader.read_u2();
                     let name_and_type_index = self.reader.read_u2();
-                    constant_pool.add(ConstantPoolEntry::InvokeDynamic
-                    { bootstrap_method_attr_index, name_and_type_index });
+                    constant_pool.add(ConstantPoolEntry::InvokeDynamic {
+                        bootstrap_method_attr_index,
+                        name_and_type_index,
+                    });
                 }
                 CONSTANT_MODULE => {
                     let name_index = self.reader.read_u2();
@@ -125,14 +142,11 @@ impl<'a> Parser<'a> {
             }
         }
 
-
         let access_flags = self.reader.read_u2();
 
-        let this_class =
-            constant_pool.get_class_name(self.reader.read_u2()).unwrap();
+        let this_class = constant_pool.get_class_name(self.reader.read_u2()).unwrap();
 
-        let super_class =
-            constant_pool.get_class_name(self.reader.read_u2()).unwrap();
+        let super_class = constant_pool.get_class_name(self.reader.read_u2()).unwrap();
 
         let interfaces_count = self.reader.read_u2();
 
@@ -196,7 +210,55 @@ impl<'a> Parser<'a> {
                                 println!("i = {}", i);
                                 println!("code_length = {}", code_length);
                                 match opcode {
-                                    _ => { println!("Unknown opcode") }
+                                    ALOAD => {}
+                                    ALOAD_0 | ALOAD_1 | ALOAD_2 | ALOAD_3 => {}
+                                    ANEWARRAY => {}
+                                    ASTORE => {}
+                                    ASTORE_0 | ASTORE_1 | ASTORE_2 | ASTORE_3 => {}
+                                    BIPUSH => {}
+                                    CHECKCAST => {}
+                                    DLOAD => {}
+                                    DLOAD_0 | DLOAD_1 | DLOAD_2 | DLOAD_3 => {}
+                                    DSTORE => {}
+                                    DSTORE_0 | DSTORE_1 | DSTORE_2 | DSTORE_3 => {}
+                                    FLOAD => {}
+                                    FLOAD_0 | FLOAD_1 | FLOAD_2 | FLOAD_3 => {}
+                                    FSTORE => {}
+                                    FSTORE_0 | FSTORE_1 | FSTORE_2 | FSTORE_3 => {}
+                                    GETFIELD | GETSTATIC | PUTFIELD | PUTSTATIC => {}
+                                    GOTO => {}
+                                    GOTO_W => {}
+                                    IF_ACMPEQ | IF_ACMPNE | IF_ICMPEQ | IF_ICMPGE | IF_ICMPGT
+                                    | IF_ICMPLE | IF_ICMPLT | IF_ICMPNE | IFEQ | IFGE | IFGT
+                                    | IFLE | IFLT | IFNE | IFNONNULL | IFNULL => {}
+                                    ILOAD => {}
+                                    ILOAD_0 | ILOAD_1 | ILOAD_2 | ILOAD_3 => {}
+                                    INSTANCEOF => {}
+                                    INVOKEDYNAMIC | INVOKEINTERFACE | INVOKESPECIAL
+                                    | INVOKESTATIC | INVOKEVIRTUAL => {}
+                                    ISTORE => {}
+                                    ISTORE_0 | ISTORE_1 | ISTORE_2 | ISTORE_3 => {}
+                                    JSR => {}
+                                    JSR_W => {}
+                                    LDC => {}
+                                    LDC_W => {}
+                                    LDC2_W => {}
+                                    LLOAD => {}
+                                    LLOAD_0 | LLOAD_1 | LLOAD_2 | LLOAD_3 => {}
+                                    LOOKUPSWITCH => {}
+                                    LSTORE => {}
+                                    LSTORE_0 | LSTORE_1 | LSTORE_2 | LSTORE_3 => {}
+                                    MULTIANEWARRAY => {}
+                                    NEW => {}
+                                    NEWARRAY => {}
+                                    RET => {}
+                                    SIPUSH => {}
+                                    TABLESWITCH => {}
+                                    WIDE => {}
+
+                                    _ => {
+                                        println!("Unknown opcode")
+                                    }
                                 }
 
                                 println!("opcode = {}", opcode);
@@ -396,7 +458,11 @@ impl<'a> Parser<'a> {
                 }
                 None => {
                     let info = self.reader.read_bytes(attribute_length as usize);
-                    println!("class attribute = {} {}", attribute_name.unwrap(), attribute_length);
+                    println!(
+                        "class attribute = {} {}",
+                        attribute_name.unwrap(),
+                        attribute_length
+                    );
                 }
             }
         }
