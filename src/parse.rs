@@ -1,30 +1,25 @@
+use std::any::Any;
+use crate::attributes::attribute_parser::AttributeParsers;
 use crate::constants::attribute_constants::*;
 use crate::constants::instructions::*;
 use crate::constants::pool_constants::*;
+use crate::instructions::instruction::{*};
 use crate::reader::Reader;
 use crate::structures::constant_pool::ConstantPool;
 use crate::structures::constant_pool_entry::ConstantPoolEntry;
 
 pub struct Parser<'a> {
-    reader: Reader<'a>,
+    pub reader: Reader<'a>,
+    pub attribute_parsers: AttributeParsers,
 }
 
 impl<'a> Parser<'a> {
     pub fn new(data: &'a Vec<u8>) -> Self {
         let reader = Reader::new(data);
-        Parser { reader }
+        Parser { reader, attribute_parsers: AttributeParsers::new() }
     }
 
-    pub fn parse(&mut self) {
-        let magic = self.reader.read_u4();
-
-        if magic != 0xCAFEBABE {
-            println!("Invalid magic");
-        }
-
-        let minor = self.reader.read_u2();
-        let major = self.reader.read_u2();
-
+    pub fn parse_constant_pool(&mut self) -> ConstantPool {
         let constant_pool_count = self.reader.read_u2();
         let mut constant_pool = ConstantPool::new(constant_pool_count);
 
@@ -142,10 +137,21 @@ impl<'a> Parser<'a> {
             }
         }
 
+        constant_pool
+    }
+
+    pub fn parse(&mut self) {
+        let magic = self.reader.read_u4();
+
+        if magic != 0xCAFEBABE {
+            println!("Invalid magic");
+        }
+
+        let minor = self.reader.read_u2();
+        let major = self.reader.read_u2();
+        let constant_pool = self.parse_constant_pool();
         let access_flags = self.reader.read_u2();
-
         let this_class = constant_pool.get_class_name(self.reader.read_u2()).unwrap();
-
         let super_class = constant_pool.get_class_name(self.reader.read_u2()).unwrap();
 
         let interfaces_count = self.reader.read_u2();
@@ -184,7 +190,7 @@ impl<'a> Parser<'a> {
         self.parse_attributes(&constant_pool);
     }
 
-    fn parse_attributes(&mut self, constant_pool: &ConstantPool) {
+    pub fn parse_attributes(&mut self, constant_pool: &ConstantPool) {
         let attributes_count = self.reader.read_u2();
 
         for _ in 0..attributes_count {
@@ -193,269 +199,9 @@ impl<'a> Parser<'a> {
 
             match attribute_name {
                 Some(name) => {
-                    match name {
-                        CONSTANT_VALUE => {
-                            let value_index = self.reader.read_u2();
-                            //println!("class attribute = {} {}", name, value_index);
-                        }
-                        CODE => {
-                            let max_stack = self.reader.read_u2();
-                            let max_locals = self.reader.read_u2();
-                            let code_length = self.reader.read_u4();
-
-                            let mut i = 0;
-                            while i < code_length {
-                                let opcode = self.reader.read_u1();
-
-                                println!("i = {}", i);
-                                println!("code_length = {}", code_length);
-                                match opcode {
-                                    ALOAD => {}
-                                    ALOAD_0 | ALOAD_1 | ALOAD_2 | ALOAD_3 => {}
-                                    ANEWARRAY => {}
-                                    ASTORE => {}
-                                    ASTORE_0 | ASTORE_1 | ASTORE_2 | ASTORE_3 => {}
-                                    BIPUSH => {}
-                                    CHECKCAST => {}
-                                    DLOAD => {}
-                                    DLOAD_0 | DLOAD_1 | DLOAD_2 | DLOAD_3 => {}
-                                    DSTORE => {}
-                                    DSTORE_0 | DSTORE_1 | DSTORE_2 | DSTORE_3 => {}
-                                    FLOAD => {}
-                                    FLOAD_0 | FLOAD_1 | FLOAD_2 | FLOAD_3 => {}
-                                    FSTORE => {}
-                                    FSTORE_0 | FSTORE_1 | FSTORE_2 | FSTORE_3 => {}
-                                    GETFIELD | GETSTATIC | PUTFIELD | PUTSTATIC => {}
-                                    GOTO => {}
-                                    GOTO_W => {}
-                                    IF_ACMPEQ | IF_ACMPNE | IF_ICMPEQ | IF_ICMPGE | IF_ICMPGT
-                                    | IF_ICMPLE | IF_ICMPLT | IF_ICMPNE | IFEQ | IFGE | IFGT
-                                    | IFLE | IFLT | IFNE | IFNONNULL | IFNULL => {}
-                                    ILOAD => {}
-                                    ILOAD_0 | ILOAD_1 | ILOAD_2 | ILOAD_3 => {}
-                                    INSTANCEOF => {}
-                                    INVOKEDYNAMIC | INVOKEINTERFACE | INVOKESPECIAL
-                                    | INVOKESTATIC | INVOKEVIRTUAL => {}
-                                    ISTORE => {}
-                                    ISTORE_0 | ISTORE_1 | ISTORE_2 | ISTORE_3 => {}
-                                    JSR => {}
-                                    JSR_W => {}
-                                    LDC => {}
-                                    LDC_W => {}
-                                    LDC2_W => {}
-                                    LLOAD => {}
-                                    LLOAD_0 | LLOAD_1 | LLOAD_2 | LLOAD_3 => {}
-                                    LOOKUPSWITCH => {}
-                                    LSTORE => {}
-                                    LSTORE_0 | LSTORE_1 | LSTORE_2 | LSTORE_3 => {}
-                                    MULTIANEWARRAY => {}
-                                    NEW => {}
-                                    NEWARRAY => {}
-                                    RET => {}
-                                    SIPUSH => {}
-                                    TABLESWITCH => {}
-                                    WIDE => {}
-
-                                    _ => {
-                                        println!("Unknown opcode")
-                                    }
-                                }
-
-                                println!("opcode = {}", opcode);
-                                i += 1;
-                            }
-                            let exception_table_length = self.reader.read_u2();
-                            for _ in 0..exception_table_length {
-                                let start_pc = self.reader.read_u2();
-                                let end_pc = self.reader.read_u2();
-                                let handler_pc = self.reader.read_u2();
-                                let catch_type = self.reader.read_u2();
-                            }
-                            self.parse_attributes(&constant_pool);
-                        }
-
-                        STACK_MAP_TABLE => {
-                            let number_of_entries = self.reader.read_u2();
-                            for _ in 0..number_of_entries {
-                                let frame_type = self.reader.read_u1();
-                            }
-                        }
-
-                        EXCEPTIONS => {
-                            let number_of_exceptions = self.reader.read_u2();
-                            for _ in 0..number_of_exceptions {
-                                let exception_index = self.reader.read_u2();
-                            }
-                        }
-
-                        INNER_CLASSES => {
-                            let number_of_classes = self.reader.read_u2();
-                            for _ in 0..number_of_classes {
-                                let inner_class_info_index = self.reader.read_u2();
-                                let outer_class_info_index = self.reader.read_u2();
-                                let inner_name_index = self.reader.read_u2();
-                                let inner_class_access_flags = self.reader.read_u2();
-                            }
-                        }
-
-                        //here
-                        ENCLOSING_METHOD => {
-                            let class_index = self.reader.read_u2();
-                            let method_index = self.reader.read_u2();
-                        }
-
-                        SYNTHETIC => {}
-
-                        SIGNATURE => {
-                            let signature_index = self.reader.read_u2();
-                        }
-
-                        SOURCE_DEBUG_EXTENSION => {
-                            let debug_extension = self.reader.read_bytes(attribute_length as usize);
-                        }
-
-                        LINE_NUMBER_TABLE => {
-                            let line_number_table_length = self.reader.read_u2();
-                            for _ in 0..line_number_table_length {
-                                let start_pc = self.reader.read_u2();
-                                let line_number = self.reader.read_u2();
-                            }
-                        }
-
-                        LOCAL_VARIABLE_TABLE => {
-                            let local_variable_table_length = self.reader.read_u2();
-                            for _ in 0..local_variable_table_length {
-                                let start_pc = self.reader.read_u2();
-                                let length = self.reader.read_u2();
-                                let name_index = self.reader.read_u2();
-                                let descriptor_index = self.reader.read_u2();
-                                let index = self.reader.read_u2();
-                            }
-                        }
-
-                        LOCAL_VARIABLE_TYPE_TABLE => {
-                            let local_variable_type_table_length = self.reader.read_u2();
-                            for _ in 0..local_variable_type_table_length {
-                                let start_pc = self.reader.read_u2();
-                                let length = self.reader.read_u2();
-                                let name_index = self.reader.read_u2();
-                                let signature_index = self.reader.read_u2();
-                                let index = self.reader.read_u2();
-                            }
-                        }
-
-                        DEPRECATED => {}
-
-                        RUNTIME_VISIBLE_ANNOTATIONS => {
-                            let num_annotations = self.reader.read_u2();
-                            for _ in 0..num_annotations {
-                                let type_index = self.reader.read_u2();
-                                let num_element_value_pairs = self.reader.read_u2();
-                                for _ in 0..num_element_value_pairs {
-                                    let element_name_index = self.reader.read_u2();
-                                    // parse element value
-                                }
-                            }
-                        }
-
-                        RUNTIME_INVISIBLE_ANNOTATIONS => {
-                            let num_annotations = self.reader.read_u2();
-                            for _ in 0..num_annotations {
-                                let type_index = self.reader.read_u2();
-                                let num_element_value_pairs = self.reader.read_u2();
-                                for _ in 0..num_element_value_pairs {
-                                    let element_name_index = self.reader.read_u2();
-                                    // parse element value
-                                }
-                            }
-                        }
-
-                        RUNTIME_VISIBLE_PARAMETER_ANNOTATIONS => {
-                            let num_parameters = self.reader.read_u1();
-                            for _ in 0..num_parameters {
-                                let num_annotations = self.reader.read_u2();
-                                for _ in 0..num_annotations {
-                                    let type_index = self.reader.read_u2();
-                                    let num_element_value_pairs = self.reader.read_u2();
-                                    for _ in 0..num_element_value_pairs {
-                                        let element_name_index = self.reader.read_u2();
-                                        // parse element value
-                                    }
-                                }
-                            }
-                        }
-                        RUNTIME_INVISIBLE_PARAMETER_ANNOTATIONS => {
-                            let num_parameters = self.reader.read_u1();
-                            for _ in 0..num_parameters {
-                                let num_annotations = self.reader.read_u2();
-                                for _ in 0..num_annotations {
-                                    let type_index = self.reader.read_u2();
-                                    let num_element_value_pairs = self.reader.read_u2();
-                                    for _ in 0..num_element_value_pairs {
-                                        let element_name_index = self.reader.read_u2();
-                                        // parse element value
-                                    }
-                                }
-                            }
-                        }
-
-                        ANNOTATION_DEFAULT => {
-                            // parse element value
-                        }
-
-                        BOOTSTRAP_METHODS => {
-                            let num_bootstrap_methods = self.reader.read_u2();
-                            for _ in 0..num_bootstrap_methods {
-                                let bootstrap_method_ref = self.reader.read_u2();
-                                let num_bootstrap_arguments = self.reader.read_u2();
-                                for _ in 0..num_bootstrap_arguments {
-                                    let bootstrap_argument = self.reader.read_u2();
-                                }
-                            }
-                        }
-
-                        METHOD_PARAMETERS => {
-                            let parameters_count = self.reader.read_u1();
-                            for _ in 0..parameters_count {
-                                let name_index = self.reader.read_u2();
-                                let access_flags = self.reader.read_u2();
-                            }
-                        }
-
-                        MODULE => {
-                            let name_index = self.reader.read_u2();
-                            let access_flags = self.reader.read_u2();
-                            let version_index = self.reader.read_u2();
-                        }
-
-                        MODULE_PACKAGES => {
-                            let num_packages = self.reader.read_u2();
-                            for _ in 0..num_packages {
-                                let package_index = self.reader.read_u2();
-                            }
-                        }
-
-                        MODULE_MAIN_CLASS => {
-                            let main_class_index = self.reader.read_u2();
-                        }
-
-                        NEST_HOST => {
-                            let host_class_index = self.reader.read_u2();
-                        }
-
-                        NEST_MEMBERS => {
-                            let num_members = self.reader.read_u2();
-                            for _ in 0..num_members {
-                                let member_class_index = self.reader.read_u2();
-                            }
-                        }
-
-                        _ => {
-                            let info = self.reader.read_bytes(attribute_length as usize);
-                            println!("class attribute = {} {}", name, attribute_length);
-                        }
-                    }
+                    self.attribute_parsers.parse_attribute(name, &mut self.reader, &constant_pool);
                 }
+                
                 None => {
                     let info = self.reader.read_bytes(attribute_length as usize);
                     println!(
