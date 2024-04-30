@@ -197,11 +197,13 @@ impl<'a> Parser<'a> {
             let attribute_name = constant_pool.get_utf8(self.reader.read_u2());
             let attribute_length = self.reader.read_u4();
 
+
+            println!("{}", attribute_name.unwrap());
             match attribute_name {
                 Some(name) => {
                     self.attribute_parsers.parse_attribute(name, &mut self.reader, &constant_pool);
                 }
-                
+
                 None => {
                     let info = self.reader.read_bytes(attribute_length as usize);
                     println!(

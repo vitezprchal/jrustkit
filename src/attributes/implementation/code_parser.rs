@@ -1,8 +1,8 @@
 use std::any::Any;
 use crate::attributes::attribute_parser::{AttributeParser, AttributeType};
 use crate::constants::attribute_constants::CODE;
-use crate::constants::instructions::{ALOAD, ALOAD_0, ALOAD_1, ALOAD_2, ALOAD_3, ANEWARRAY, ASTORE, ASTORE_0, ASTORE_1, ASTORE_2, ASTORE_3, BIPUSH, CHECKCAST, DLOAD, DLOAD_0, DLOAD_1, DLOAD_2, DLOAD_3, DSTORE, DSTORE_0, DSTORE_1, DSTORE_2, DSTORE_3, FLOAD, FLOAD_0, FLOAD_1, FLOAD_2, FLOAD_3, FSTORE, FSTORE_0, FSTORE_1, FSTORE_2, FSTORE_3, GETFIELD, GETSTATIC, GOTO, GOTO_W, IF_ACMPEQ, IF_ACMPNE, IF_ICMPEQ, IF_ICMPGE, IF_ICMPGT, IF_ICMPLE, IF_ICMPLT, IF_ICMPNE, IFEQ, IFGE, IFGT, IFLE, IFLT, IFNE, IFNONNULL, IFNULL, ILOAD, ILOAD_0, ILOAD_1, ILOAD_2, ILOAD_3, INSTANCEOF, INVOKEDYNAMIC, INVOKEINTERFACE, INVOKESPECIAL, INVOKESTATIC, INVOKEVIRTUAL, ISTORE, ISTORE_0, ISTORE_1, ISTORE_2, ISTORE_3, JSR, JSR_W, LDC, LDC2_W, LDC_W, LLOAD, LLOAD_0, LLOAD_1, LLOAD_2, LLOAD_3, LOOKUPSWITCH, LSTORE, LSTORE_0, LSTORE_1, LSTORE_2, LSTORE_3, MULTIANEWARRAY, NEW, NEWARRAY, PUTFIELD, PUTSTATIC, RET, SIPUSH, TABLESWITCH, WIDE};
-use crate::instructions::instruction::{Instruction, InstructionByte, InstructionInvoke, InstructionLoad};
+use crate::constants::instructions::{*};
+use crate::instructions::instruction::{*};
 use crate::parse::Parser;
 use crate::reader::Reader;
 use crate::structures::constant_pool::ConstantPool;
@@ -30,16 +30,28 @@ impl AttributeParser for CodeAttributeParser {
             println!("code_length = {}", code_length);
             match opcode {
                 ALOAD => {
+                    let index = reader.read_u1();
+                    instructions.push(Box::new(InstructionLoad {
+                        opcode,
+                        index,
+                    }));
                     i += 1;
                 }
                 ALOAD_0 | ALOAD_1 | ALOAD_2 | ALOAD_3 => {
-                    let index = opcode - crate::constants::instructions::ALOAD_0;
+                    let index = opcode - ALOAD_0;
                     instructions.push(Box::new(InstructionLoad {
                         opcode: ALOAD,
                         index,
                     }));
                 }
-                ANEWARRAY => {}
+                ANEWARRAY => {
+                    let index = reader.read_u2();
+                    instructions.push(Box::new(InstructionAnewArray {
+                        opcode,
+                        index,
+                    }));
+                    i += 2;
+                }
                 ASTORE => {}
                 ASTORE_0 | ASTORE_1 | ASTORE_2 | ASTORE_3 => {}
                 BIPUSH => {}

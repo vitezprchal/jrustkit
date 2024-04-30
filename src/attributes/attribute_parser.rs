@@ -1,38 +1,48 @@
-use crate::attributes::{code_parser, constant_value_parser, exceptions_parser, signature_parser};
-use crate::attributes::annotation_default_parser::{AnnotationDefaultAttribute, AnnotationDefaultParser};
-use crate::attributes::bootstrap_methods_parser::{BootstrapMethodsAttribute, BootstrapMethodsParser};
-use crate::attributes::code_parser::CodeAttributeParser;
-use crate::attributes::constant_value_parser::ConstantValueParser;
-use crate::attributes::deprecated_parser::{DeprecatedAttribute, DeprecatedParser};
-use crate::attributes::enclosing_method_parser::{EnclosingMethodAttribute, EnclosingMethodParser};
-use crate::attributes::exceptions_parser::ExceptionsParser;
-use crate::attributes::inner_classes_parser::{InnerClassesAttribute, InnerClassesParser};
-use crate::attributes::line_number_table_parser::{LineNumberTableAttribute, LineNumberTableParser};
-use crate::attributes::local_variable_table_parser::{LocalVariableTableAttribute, LocalVariableTableParser};
-use crate::attributes::method_parameters::{MethodParametersAttribute, MethodParametersParser};
-use crate::attributes::module_main_class_parser::{ModuleMainClassAttribute, ModuleMainClassParser};
-use crate::attributes::module_packages_parser::{ModulePackagesAttribute, ModulePackagesParser};
-use crate::attributes::module_parser::{ModuleAttribute, ModuleParser};
-use crate::attributes::nest_host_parser::{NestHostAttribute, NestHostParser};
-use crate::attributes::nest_members_parser::{NestMembersAttribute, NestMembersParser};
-use crate::attributes::runtime_invisible_annotations_parser::{RuntimeInvisibleAnnotationsAttribute, RuntimeInvisibleAnnotationsParser};
-use crate::attributes::runtime_invisible_parameter_annotations_parser::{RuntimeInvisibleParameterAnnotationsAttribute, RuntimeInvisibleParameterAnnotationsParser};
-use crate::attributes::runtime_visible_annotations::{RuntimeVisibleAnnotationsAttribute, RuntimeVisibleAnnotationsParser};
-use crate::attributes::runtime_visible_parameter_annotations::RuntimeVisibleParameterAnnotationsParser;
-use crate::attributes::signature_parser::SignatureParser;
-use crate::attributes::source_debug_extension_parser::{SourceDebugExtensionAttribute, SourceDebugExtensionParser};
-use crate::attributes::source_file_parser::{SourceFileAttribute, SourceFileAttributeParser};
-use crate::attributes::stack_map_table_parser::{StackMapTableAttribute, StackMapTableAttributeParser};
-use crate::attributes::synthetic_parser::{SyntheticAttribute, SyntheticParser};
+use crate::attributes::implementation::*;
+use crate::attributes::implementation::annotation_default_parser::*;
+use crate::attributes::implementation::bootstrap_methods_parser::*;
+use crate::attributes::implementation::code_parser::*;
+use crate::attributes::implementation::constant_value_parser::*;
+use crate::attributes::implementation::deprecated_parser::*;
+use crate::attributes::implementation::enclosing_method_parser::*;
+use crate::attributes::implementation::exceptions_parser::*;
+use crate::attributes::implementation::inner_classes_parser::*;
+use crate::attributes::implementation::line_number_table_parser::*;
+use crate::attributes::implementation::local_variable_table_parser::*;
+use crate::attributes::implementation::method_parameters::*;
+use crate::attributes::implementation::module_main_class_parser::*;
+use crate::attributes::implementation::module_packages_parser::*;
+use crate::attributes::implementation::module_parser::*;
+use crate::attributes::implementation::nest_host_parser::*;
+use crate::attributes::implementation::nest_members_parser::*;
+use crate::attributes::implementation::runtime_invisible_annotations_parser::*;
+use crate::attributes::implementation::runtime_invisible_parameter_annotations_parser::*;
+use crate::attributes::implementation::runtime_visible_annotations::*;
+use crate::attributes::implementation::runtime_visible_parameter_annotations::*;
+use crate::attributes::implementation::signature_parser::*;
+use crate::attributes::implementation::source_debug_extension_parser::*;
+use crate::attributes::implementation::source_file_parser::*;
+use crate::attributes::implementation::stack_map_table_parser::*;
+use crate::attributes::implementation::synthetic_parser::*;
 use crate::reader::Reader;
 use crate::structures::constant_pool::ConstantPool;
 
+macro_rules! attribute_parser {
+    ($($parser:ident),*) => {
+        vec![
+            $(
+                Box::new($parser),
+            )*
+        ]
+    };
+}
+
 pub enum AttributeType {
-    ConstantValue(constant_value_parser::ConstantValueAttribute),
-    Code(code_parser::CodeAttribute),
+    ConstantValue(ConstantValueAttribute),
+    Code(CodeAttribute),
     StackMapTable(StackMapTableAttribute),
-    Signature(signature_parser::SignatureAttribute),
-    Exceptions(exceptions_parser::ExceptionsAttribute),
+    Signature(SignatureAttribute),
+    Exceptions(ExceptionsAttribute),
     SourceFile(SourceFileAttribute),
     InnerClasses(InnerClassesAttribute),
     EnclosingMethod(EnclosingMethodAttribute),
@@ -66,32 +76,31 @@ pub struct AttributeParsers {
 impl AttributeParsers {
     pub fn new() -> Self {
         Self {
-            parsers: vec![
-                Box::new(ConstantValueParser),
-                Box::new(CodeAttributeParser),
-                Box::new(StackMapTableAttributeParser),
-                Box::new(SignatureParser),
-                Box::new(ExceptionsParser),
-                Box::new(SourceFileAttributeParser),
-                Box::new(InnerClassesParser),
-                Box::new(EnclosingMethodParser),
-                Box::new(SyntheticParser),
-                Box::new(SourceDebugExtensionParser),
-                Box::new(LineNumberTableParser),
-                Box::new(LocalVariableTableParser),
-                Box::new(DeprecatedParser),
-                Box::new(RuntimeInvisibleAnnotationsParser),
-                Box::new(RuntimeInvisibleParameterAnnotationsParser),
-                Box::new(RuntimeVisibleAnnotationsParser),
-                Box::new(RuntimeVisibleParameterAnnotationsParser),
-                Box::new(AnnotationDefaultParser),
-                Box::new(BootstrapMethodsParser),
-                Box::new(MethodParametersParser),
-                Box::new(ModuleParser),
-                Box::new(ModulePackagesParser),
-                Box::new(ModuleMainClassParser),
-                Box::new(NestHostParser),
-                Box::new(NestMembersParser),
+            parsers: attribute_parser![
+                ConstantValueParser,
+                CodeAttributeParser,
+                StackMapTableAttributeParser,
+                SignatureParser,
+                ExceptionsParser,
+                SourceFileAttributeParser,
+                InnerClassesParser,
+                EnclosingMethodParser,
+                SyntheticParser,
+                SourceDebugExtensionParser,
+                LineNumberTableParser,
+                LocalVariableTableParser,
+                DeprecatedParser,
+                RuntimeInvisibleAnnotationsParser,
+                RuntimeInvisibleParameterAnnotationsParser,
+                RuntimeVisibleAnnotationsParser,
+                AnnotationDefaultParser,
+                BootstrapMethodsParser,
+                MethodParametersParser,
+                ModuleParser,
+                ModulePackagesParser,
+                ModuleMainClassParser,
+                NestHostParser,
+                NestMembersParser
             ]
         }
     }

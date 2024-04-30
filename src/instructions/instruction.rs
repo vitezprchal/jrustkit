@@ -1,38 +1,10 @@
-use std::any::Any;
+use crate::instructions::implementation::instruction_load::InstructionVariable;
 
-pub trait Instruction: Any {
+pub enum InstructionType {
+    Variable(InstructionVariable)
+}
+
+pub trait Instruction {
     fn get_opcode(&self) -> u8;
-}
-
-pub struct InstructionLoad {
-    pub opcode: u8,
-    pub index: u8,
-}
-
-impl Instruction for InstructionLoad {
-    fn get_opcode(&self) -> u8 {
-        self.opcode
-    }
-}
-
-
-pub struct InstructionByte {
-    pub opcode: u8,
-}
-
-impl Instruction for InstructionByte {
-    fn get_opcode(&self) -> u8 {
-        self.opcode
-    }
-}
-
-pub struct InstructionInvoke {
-    pub opcode: u8,
-    pub method_description: u16,
-}
-
-impl Instruction for InstructionInvoke {
-    fn get_opcode(&self) -> u8 {
-        self.opcode
-    }
+    fn get_type(&self) -> InstructionType;
 }
