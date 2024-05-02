@@ -16,7 +16,7 @@ pub struct LineNumberTableAttribute {
 
 impl AttributeParser for LineNumberTableParser {
     fn parse_attribute(&self, reader: &mut Reader, _: &ConstantPool) -> AttributeType {
-        let length = reader.read_u4();
+        let length = reader.read_u2();
         let mut line_number_table = Vec::new();
         for _ in 0..length {
             let start_pc = reader.read_u2();

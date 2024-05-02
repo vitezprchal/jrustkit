@@ -1,1 +1,3 @@
-pub enum InstructionVariable {}
+pub enum InstructionVariable {
+    Index(u8),
+}

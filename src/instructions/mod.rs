@@ -1,2 +1,2 @@
 pub mod instruction;
-mod implementation;
+pub mod implementation;

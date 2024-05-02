@@ -1,10 +1,27 @@
-use crate::instructions::implementation::instruction_load::InstructionVariable;
+use crate::instructions::implementation::instruction_anewarray::InstructionAnewarray;
+use crate::instructions::implementation::instruction_load::{*};
 
 pub enum InstructionType {
-    Variable(InstructionVariable)
+    None {},
+    Variable { index: u8 },
+    Anewarray { index: u16 },
+    Bipush { byte: u8 },
+    Checkcast { index: u16 },
+    Field { index: u16 },
+    Ldc { index: u8 },
+    Invoke { index: u16 },
 }
 
-pub trait Instruction {
-    fn get_opcode(&self) -> u8;
-    fn get_type(&self) -> InstructionType;
+pub struct Instruction {
+    pub instruction_type: InstructionType,
+    pub opcode: u8,
+}
+
+impl Instruction {
+    pub fn new(opcode: u8, instruction_type: InstructionType) -> Instruction {
+        Instruction {
+            instruction_type,
+            opcode,
+        }
+    }
 }
