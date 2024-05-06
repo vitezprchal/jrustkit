@@ -1,5 +1,4 @@
-use crate::instructions::implementation::instruction_anewarray::InstructionAnewarray;
-use crate::instructions::implementation::instruction_load::{*};
+use crate::instructions::implementation::instruction_load::*;
 
 pub enum InstructionType {
     None {},

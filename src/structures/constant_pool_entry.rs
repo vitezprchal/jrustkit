@@ -62,54 +62,103 @@ pub enum ConstantPoolEntry {
     Package {
         name_index: u16,
     },
-
 }
-
 
 impl fmt::Display for ConstantPoolEntry {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            ConstantPoolEntry::Class { name_index } =>
-                write!(f, "Class with name index: {}", name_index),
-            ConstantPoolEntry::Fieldref { class_index, name_and_type_index } =>
-                write!(f, "Fieldref with class index: {} and name and type index: {}",
-                       class_index, name_and_type_index),
-            ConstantPoolEntry::Methodref { class_index, name_and_type_index } =>
-                write!(f, "Methodref with class index: {} and name and type index: {}",
-                       class_index, name_and_type_index),
-            ConstantPoolEntry::InterfaceMethodref { class_index, name_and_type_index } =>
-                write!(f, "InterfaceMethodref with class index: {} and name and type index: {}",
-                       class_index, name_and_type_index),
-            ConstantPoolEntry::String { string_index } =>
-                write!(f, "String with string index: {}", string_index),
-            ConstantPoolEntry::Integer { bytes } =>
-                write!(f, "Integer with bytes: {}", bytes),
-            ConstantPoolEntry::Float { bytes } =>
-                write!(f, "Float with bytes: {}", bytes),
-            ConstantPoolEntry::Long { high_bytes, low_bytes } =>
-                write!(f, "Long with high bytes: {} and low bytes: {}", high_bytes, low_bytes),
-            ConstantPoolEntry::Double { high_bytes, low_bytes } =>
-                write!(f, "Double with high bytes: {} and low bytes: {}", high_bytes, low_bytes),
-            ConstantPoolEntry::NameAndType { name_index, descriptor_index } =>
-                write!(f, "NameAndType with name index: {} and descriptor index: {}",
-                       name_index, descriptor_index),
-            ConstantPoolEntry::Utf8 { length, bytes } =>
-                write!(f, "Utf8 with length: {} and bytes: {:?}", length, bytes),
-            ConstantPoolEntry::MethodHandle { reference_kind, reference_index } =>
-                write!(f, "MethodHandle with reference kind: {} and reference index: {}",
-                       reference_kind, reference_index),
-            ConstantPoolEntry::MethodType { descriptor_index } =>
-                write!(f, "MethodType with descriptor index: {}", descriptor_index),
-            ConstantPoolEntry::Dynamic { bootstrap_method_attr_index, name_and_type_index } =>
-                write!(f, "Dynamic with bootstrap method attr index: {} and name and type index: {}",
-                       bootstrap_method_attr_index, name_and_type_index),
-            ConstantPoolEntry::InvokeDynamic { bootstrap_method_attr_index, name_and_type_index } =>
-                write!(f, "InvokeDynamic with bootstrap method attr index: {} and name and type index: {}",
-                       bootstrap_method_attr_index, name_and_type_index),
-            ConstantPoolEntry::Module { name_index } =>
-                write!(f, "Module with name index: {}", name_index),
-            ConstantPoolEntry::Package { name_index } =>
-                write!(f, "Package with name index: {}", name_index),
+            ConstantPoolEntry::Class { name_index } => {
+                write!(f, "Class with name index: {}", name_index)
+            }
+            ConstantPoolEntry::Fieldref {
+                class_index,
+                name_and_type_index,
+            } => write!(
+                f,
+                "Fieldref with class index: {} and name and type index: {}",
+                class_index, name_and_type_index
+            ),
+            ConstantPoolEntry::Methodref {
+                class_index,
+                name_and_type_index,
+            } => write!(
+                f,
+                "Methodref with class index: {} and name and type index: {}",
+                class_index, name_and_type_index
+            ),
+            ConstantPoolEntry::InterfaceMethodref {
+                class_index,
+                name_and_type_index,
+            } => write!(
+                f,
+                "InterfaceMethodref with class index: {} and name and type index: {}",
+                class_index, name_and_type_index
+            ),
+            ConstantPoolEntry::String { string_index } => {
+                write!(f, "String with string index: {}", string_index)
+            }
+            ConstantPoolEntry::Integer { bytes } => write!(f, "Integer with bytes: {}", bytes),
+            ConstantPoolEntry::Float { bytes } => write!(f, "Float with bytes: {}", bytes),
+            ConstantPoolEntry::Long {
+                high_bytes,
+                low_bytes,
+            } => write!(
+                f,
+                "Long with high bytes: {} and low bytes: {}",
+                high_bytes, low_bytes
+            ),
+            ConstantPoolEntry::Double {
+                high_bytes,
+                low_bytes,
+            } => write!(
+                f,
+                "Double with high bytes: {} and low bytes: {}",
+                high_bytes, low_bytes
+            ),
+            ConstantPoolEntry::NameAndType {
+                name_index,
+                descriptor_index,
+            } => write!(
+                f,
+                "NameAndType with name index: {} and descriptor index: {}",
+                name_index, descriptor_index
+            ),
+            ConstantPoolEntry::Utf8 { length, bytes } => {
+                write!(f, "Utf8 with length: {} and bytes: {:?}", length, bytes)
+            }
+            ConstantPoolEntry::MethodHandle {
+                reference_kind,
+                reference_index,
+            } => write!(
+                f,
+                "MethodHandle with reference kind: {} and reference index: {}",
+                reference_kind, reference_index
+            ),
+            ConstantPoolEntry::MethodType { descriptor_index } => {
+                write!(f, "MethodType with descriptor index: {}", descriptor_index)
+            }
+            ConstantPoolEntry::Dynamic {
+                bootstrap_method_attr_index,
+                name_and_type_index,
+            } => write!(
+                f,
+                "Dynamic with bootstrap method attr index: {} and name and type index: {}",
+                bootstrap_method_attr_index, name_and_type_index
+            ),
+            ConstantPoolEntry::InvokeDynamic {
+                bootstrap_method_attr_index,
+                name_and_type_index,
+            } => write!(
+                f,
+                "InvokeDynamic with bootstrap method attr index: {} and name and type index: {}",
+                bootstrap_method_attr_index, name_and_type_index
+            ),
+            ConstantPoolEntry::Module { name_index } => {
+                write!(f, "Module with name index: {}", name_index)
+            }
+            ConstantPoolEntry::Package { name_index } => {
+                write!(f, "Package with name index: {}", name_index)
+            }
         }
     }
 }

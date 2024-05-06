@@ -1,12 +1,12 @@
-use std::any::Any;
 use crate::attributes::attribute_parser::AttributeParsers;
 use crate::constants::attribute_constants::*;
 use crate::constants::instructions::*;
 use crate::constants::pool_constants::*;
-use crate::instructions::instruction::{*};
+use crate::instructions::instruction::*;
 use crate::reader::Reader;
 use crate::structures::constant_pool::ConstantPool;
 use crate::structures::constant_pool_entry::ConstantPoolEntry;
+use std::any::Any;
 
 pub struct Parser<'a> {
     pub reader: Reader<'a>,
@@ -16,7 +16,10 @@ pub struct Parser<'a> {
 impl<'a> Parser<'a> {
     pub fn new(data: &'a Vec<u8>) -> Self {
         let reader = Reader::new(data);
-        Parser { reader, attribute_parsers: AttributeParsers::new() }
+        Parser {
+            reader,
+            attribute_parsers: AttributeParsers::new(),
+        }
     }
 
     pub fn parse_constant_pool(&mut self) -> ConstantPool {
@@ -195,13 +198,12 @@ impl<'a> Parser<'a> {
             let attribute_name = constant_pool.get_utf8(self.reader.read_u2());
             let attribute_length = self.reader.read_u4();
 
-            println!(
-                "{}",
-                attribute_name.unwrap());
+            println!("{}", attribute_name.unwrap());
 
             match attribute_name {
                 Some(name) => {
-                    self.attribute_parsers.parse_attribute(name, &mut self.reader, &constant_pool);
+                    self.attribute_parsers
+                        .parse_attribute(name, &mut self.reader, &constant_pool);
 
                     if name == CODE {
                         self.parse_attributes(&constant_pool);

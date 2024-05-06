@@ -20,14 +20,10 @@ impl AttributeParser for StackMapTableAttributeParser {
         let mut entries: Vec<StackMapFrame> = Vec::new();
         for _ in 0..stack_map_table_length {
             let frame_type = reader.read_u1();
-            entries.push(StackMapFrame {
-                frame_type,
-            });
+            entries.push(StackMapFrame { frame_type });
         }
 
-        AttributeType::StackMapTable(StackMapTableAttribute {
-            entries,
-        })
+        AttributeType::StackMapTable(StackMapTableAttribute { entries })
     }
 
     fn get_name(&self) -> &str {

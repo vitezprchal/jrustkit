@@ -12,7 +12,6 @@ impl AttributeParser for RuntimeInvisibleParameterAnnotationsParser {
         todo!("RuntimeInvisibleParameterAnnotationsParser")
     }
 
-
     fn get_name(&self) -> &str {
         RUNTIME_INVISIBLE_PARAMETER_ANNOTATIONS
     }

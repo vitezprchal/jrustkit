@@ -1,9 +1,9 @@
-mod structures;
-mod constants;
-mod reader;
-mod parse;
-mod instructions;
 mod attributes;
+mod constants;
+mod instructions;
+mod parse;
+mod reader;
+mod structures;
 
 use std::{env, fs};
 

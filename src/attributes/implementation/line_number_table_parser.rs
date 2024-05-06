@@ -21,7 +21,10 @@ impl AttributeParser for LineNumberTableParser {
         for _ in 0..length {
             let start_pc = reader.read_u2();
             let line_number = reader.read_u2();
-            line_number_table.push(LineNumberTableEntry { start_pc, line_number });
+            line_number_table.push(LineNumberTableEntry {
+                start_pc,
+                line_number,
+            });
         }
         AttributeType::LineNumberTable(LineNumberTableAttribute { line_number_table })
     }

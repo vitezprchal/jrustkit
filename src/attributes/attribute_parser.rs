@@ -1,4 +1,3 @@
-use crate::attributes::implementation::*;
 use crate::attributes::implementation::annotation_default_parser::*;
 use crate::attributes::implementation::bootstrap_methods_parser::*;
 use crate::attributes::implementation::code_parser::*;
@@ -24,6 +23,7 @@ use crate::attributes::implementation::source_debug_extension_parser::*;
 use crate::attributes::implementation::source_file_parser::*;
 use crate::attributes::implementation::stack_map_table_parser::*;
 use crate::attributes::implementation::synthetic_parser::*;
+use crate::attributes::implementation::*;
 use crate::reader::Reader;
 use crate::structures::constant_pool::ConstantPool;
 
@@ -101,14 +101,16 @@ impl AttributeParsers {
                 ModuleMainClassParser,
                 NestHostParser,
                 NestMembersParser
-            ]
+            ],
         }
     }
 
-    pub fn parse_attribute(&self, attribute_name: &str,
-                           parser: &mut Reader, constant_pool: &ConstantPool) ->
-                           Option<AttributeType>
-    {
+    pub fn parse_attribute(
+        &self,
+        attribute_name: &str,
+        parser: &mut Reader,
+        constant_pool: &ConstantPool,
+    ) -> Option<AttributeType> {
         for self_parser in &self.parsers {
             if self_parser.get_name() == attribute_name {
                 return Some(self_parser.parse_attribute(parser, constant_pool));

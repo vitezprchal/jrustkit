@@ -14,7 +14,10 @@ impl AttributeParser for EnclosingMethodParser {
     fn parse_attribute(&self, parser: &mut Reader, constant_pool: &ConstantPool) -> AttributeType {
         let class_index = parser.read_u2();
         let method_index = parser.read_u2();
-        AttributeType::EnclosingMethod(EnclosingMethodAttribute { class_index, method_index })
+        AttributeType::EnclosingMethod(EnclosingMethodAttribute {
+            class_index,
+            method_index,
+        })
     }
 
     fn get_name(&self) -> &str {

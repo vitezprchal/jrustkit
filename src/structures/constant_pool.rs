@@ -26,9 +26,7 @@ impl ConstantPool {
 
     pub fn get_class_name(&self, index: u16) -> Option<&str> {
         match self.get(index - 1) {
-            Some(ConstantPoolEntry::Class { name_index }) => {
-                self.get_utf8(*name_index)
-            }
+            Some(ConstantPoolEntry::Class { name_index }) => self.get_utf8(*name_index),
             _ => None,
         }
     }

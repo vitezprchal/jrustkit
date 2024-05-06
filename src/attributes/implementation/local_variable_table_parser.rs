@@ -35,7 +35,9 @@ impl AttributeParser for LocalVariableTableParser {
                 index,
             });
         }
-        AttributeType::LocalVariableTable(LocalVariableTableAttribute { local_variable_table })
+        AttributeType::LocalVariableTable(LocalVariableTableAttribute {
+            local_variable_table,
+        })
     }
 
     fn get_name(&self) -> &str {

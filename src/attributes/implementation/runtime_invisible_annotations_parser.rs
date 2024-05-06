@@ -17,7 +17,9 @@ impl AttributeParser for RuntimeInvisibleAnnotationsParser {
             let element_name_index = reader.read_u2();
             todo!()
         }
-        AttributeType::RuntimeInvisibleAnnotations(RuntimeInvisibleAnnotationsAttribute { annotations })
+        AttributeType::RuntimeInvisibleAnnotations(RuntimeInvisibleAnnotationsAttribute {
+            annotations,
+        })
     }
 
     fn get_name(&self) -> &str {
