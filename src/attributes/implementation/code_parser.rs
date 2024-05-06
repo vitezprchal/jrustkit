@@ -21,11 +21,10 @@ impl AttributeParser for CodeAttributeParser {
 
         let mut i = 0;
         let mut instructions = Vec::new();
-        println!("code_length = {}", code_length);
         while i < code_length {
             let opcode = reader.read_u1();
 
-            println!("{} {}", opcode, i);
+            println!("{}", opcode_to_name(opcode).unwrap());
             match opcode {
                 ALOAD | DLOAD | FLOAD | ILOAD | LLOAD | ASTORE | DSTORE | FSTORE | ISTORE
                 | LSTORE => {
@@ -113,11 +112,15 @@ impl AttributeParser for CodeAttributeParser {
 
                     i += 2;
                 }
-                GOTO => {}
                 GOTO_W => {}
                 IF_ACMPEQ | IF_ACMPNE | IF_ICMPEQ | IF_ICMPGE | IF_ICMPGT | IF_ICMPLE
                 | IF_ICMPLT | IF_ICMPNE | IFEQ | IFGE | IFGT | IFLE | IFLT | IFNE | IFNONNULL
-                | IFNULL => {}
+                | IFNULL | GOTO => {
+                    let offset = reader.read_u2();
+                    instructions.push(Instruction::new(opcode, InstructionType::Offset { offset }));
+
+                    i += 2;
+                }
                 INSTANCEOF => {}
                 INVOKEDYNAMIC | INVOKEINTERFACE | INVOKESPECIAL | INVOKESTATIC | INVOKEVIRTUAL => {
                     let index = reader.read_u2();

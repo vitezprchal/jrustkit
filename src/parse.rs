@@ -199,6 +199,7 @@ impl<'a> Parser<'a> {
             let attribute_length = self.reader.read_u4();
 
             println!("{}", attribute_name.unwrap());
+            println!("{}", attribute_length);
 
             match attribute_name {
                 Some(name) => {

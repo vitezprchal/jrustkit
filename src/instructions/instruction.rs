@@ -9,6 +9,7 @@ pub enum InstructionType {
     Field { index: u16 },
     Ldc { index: u8 },
     Invoke { index: u16 },
+    Offset { offset: u16 },
 }
 
 pub struct Instruction {
